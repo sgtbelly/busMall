@@ -1,9 +1,12 @@
 * {
-  color: darkolivegreen;
-  background-color: lightslategray 
-  
+  color: black;
+  font-family: 'Helvetica';
+  outline: 1px none;
+  background-color: skyblue;
 }
-img {
-  width: 125;
 
+img {
+  width: 150px;
+  margin: 25px;
+  outline: 1px black;
 }

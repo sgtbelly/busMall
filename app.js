@@ -1,20 +1,19 @@
 'use strict';
+//we need an array of images-DONE
+//we need a constructor function for products-DONE
+//we need an event listener
+//we need an image repository
+//we need to randomize the images-DONE
+//we need a vote counter
+//we need a view counter
+//we need an event handler
+//we need to know total clicks
+//we need to display the list w/ DOM manipulation
+//we need to make sure the images do not repeat-DONE
+//all the DOM appending
+Product.names = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
 
-//we need an array of images
-// we need a constructor function for products
-// we need an event listener
-// we need an image repo
-// we need to randomize the images
-// we need a vote counter
-//  we need a view counter
-// we need an event handler
-// we need to know total clicks
-// we need to display the list w/ DOM manipulation
-// we need to make sure the images do not repeat
-// all the DOM appending
-
-Product.names = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wineglass'];
-
+//contains all the products
 Product.all = [];
 Product.container = document.getElementById('image_container');
 Product.justViewed = [];
@@ -22,15 +21,24 @@ Product.pics = [document.getElementById('left'), document.getElementById('center
 Product.tally = document.getElementById('tally');
 Product.totalClicks = 0;
 
+
 function Product(name) {
   this.name = name;
-  this.path = 'img/' + name + '.jpg';
+  this.path;
+  if (name === 'sweep') {
+    this.path = 'img/' + name + '.png';
+  }else if (name === 'usb'){
+    this.path = 'img/' + name + '.gif';
+  }else{
+    this.path = 'img/' + name + '.jpg';
+  }
+  // this.path = 'img/' + name + '.png';
+  // this.path = 'img/' + name + '.gif';
   this.votes = 0;
   this.views = 0;
   Product.all.push(this);
 }
-
-for(var i = 0; i < Product.names.length; i++) {
+for (var i = 0; i < Product.names.length; i++) {
   new Product(Product.names[i]);
 }
 
@@ -40,62 +48,93 @@ function makeRandom() {
 
 function displayPics() {
   var currentlyShowing = [];
-  // make left image unique
+  //make left image unique
   currentlyShowing[0] = makeRandom();
-  while(Product.justViewed.indexOf(currentlyShowing[0]) !== -1) {
-    console.log('Duplicate, rerun!');
+  while (Product.justViewed.indexOf(currentlyShowing[0]) !== -1) {
+    console.error('Duplicate, rerun!');
     currentlyShowing[0] = makeRandom();
   }
-  // make center image unique
+  //make center image unique
   currentlyShowing[1] = makeRandom();
-  while(currentlyShowing[0] === currentlyShowing[1] || Product.justViewed.indexOf(currentlyShowing[1]) !== -1) {
+  while (currentlyShowing[0] === currentlyShowing[1] || Product.justViewed.indexOf(currentlyShowing[1]) !== -1) {
     console.error('Duplicate at center or in prior view! Re run!');
+    currentlyShowing[1] = makeRandom();
   }
-
-  // make right image unique
-  currentlyShowing[2];
-
-  // take it to the DOM one more time
-  for(var i = 0; i < 3; i++) {
+  //make right image unique
+  currentlyShowing[2] = makeRandom();
+  while (currentlyShowing[0] === currentlyShowing[2] || currentlyShowing[1] === currentlyShowing[2] || Product.justViewed.indexOf(currentlyShowing[2]) !== -1) {
+    console.error('Duplicate at right! re run it.');
+    currentlyShowing[2] = makeRandom();
+  }
+  //take it to the DOM
+  for (var i = 0; i < 3; i++) {
     Product.pics[i].src = Product.all[currentlyShowing[i]].path;
     Product.pics[i].id = Product.all[currentlyShowing[i]].name;
     Product.all[currentlyShowing[i]].views += 1;
     Product.justViewed[i] = currentlyShowing[i];
   }
 }
-//a way to click on images
-//event handler for keeping track of total clicks on images
-
+//event listener for keeping track of total clicks on images
 function handleClick(event) {
   console.log(Product.totalClicks, 'total clicks');
-  // make clicks stop at 25
-  if(Product.totalClicks > 24) {
+  //make the clicks stop at 25
+  if (Product.totalClicks > 24) {
     Product.container.removeEventListener('click', handleClick);
     //show the list after the last click
     showTally();
   }
   //this is how we direct the user to click on a specific image
-  if(event.target.id === 'image_container') {
-    return alert('Need to click on an image');
+  if (event.target.id === 'image_container') {
+    return alert('Need to click on an image.');
   }
-  //start to add up the total clicks
+  //start to add up the total clicks and log it to the console
   Product.totalClicks += 1;
-  for(var i = 0; i < Product.names.length; i++) {
-    if(event.target.id === Product.all[i].name) {
+  for (var i = 0; i < Product.names.length; i++) {
+    if (event.target.id === Product.all[i].name) {
       Product.all[i].votes += 1;
       console.log(event.target.id + ' has ' + Product.all[i].votes + ' votes in ' + Product.all[i].views + ' views.');
     }
   }
   displayPics();
 }
-// Show the tally using the list in the DOM once the event listener has been removed
+
+//show the tally using the list in the DOM once the event listener has been removed
 function showTally() {
-  for(var i = 0; i < Product.all.length; i++) {
-    var liEL = document.createElement('li');
-    liEL.textContent = Product.all[i].name + ' has ' + Product.all[i].votes + ' votes in ' + Product.all[i].views + ' views.';
-    //Append the li to the Product.tally created above gloabally for the ul
-    Product.tally.appendChild(liEL);
+  for (var i = 0; i < Product.all.length; i++) {
+    var liEl = document.createElement('li');
+    liEl.textContent = Product.all[i].name + ' has ' + Product.all[i].votes + ' votes in ' + Product.all[i].views + ' views.';
+    //append the li to the Product.tally created above globally for the ul
+    Product.tally.appendChild(liEl);
   }
 }
-//add event listener
+//event listener
 Product.container.addEventListener('click', handleClick);
+displayPics();
+
+//this holds the value for the votes of each product image
+var data = [Product.tally];
+//this is the name for each product
+var labelColors = ['red', 'blue', 'yellow', 'green', 'purple', 'orange'];
+
+var ctx = document.getElementById('chart').getContext('2d');
+
+var Chart = new Chart(ctx, {
+    type: 'bar', 
+    data: {
+        labels: labelColors,
+        datasets: [{
+            label: '# of Votes',
+            data: data,
+            backgroundColor: labelColors
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
