@@ -110,31 +110,3 @@ function showTally() {
 //event listener
 Product.container.addEventListener('click', handleClick);
 displayPics();
-
-//this holds the value for the votes of each product image
-var data = [Product.tally];
-//this is the name for each product
-var labelColors = ['red', 'blue', 'yellow', 'green', 'purple', 'orange'];
-
-var ctx = document.getElementById('chart').getContext('2d');
-
-var Chart = new Chart(ctx, {
-    type: 'bar', 
-    data: {
-        labels: labelColors,
-        datasets: [{
-            label: '# of Votes',
-            data: data,
-            backgroundColor: labelColors
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-});
